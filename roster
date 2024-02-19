@@ -1,0 +1,208 @@
+import pandas as pd
+
+class Position_Player:
+    def __init__(self, name, college, position, year):
+        self.name = name
+        self.college = college
+        self.position = position
+        self.year = year
+
+    # Example method
+    def display_player_info(self):
+        print(f"{self.name}, {self.position}, {self.college}, {self.year}")
+
+
+class Pitcher:
+    def __init__(self, name, college, position, year):
+        self.name = name
+        self.college = college
+        self.position = position
+        self.year = year
+        
+    
+    def display_player_info(self):
+        print(f"{self.name}, {self.position}, {self.college}, {self.year}")
+
+
+# Creating a roster
+position_roster = [
+    Position_Player("Jonathan Anderosky","Desales", "CF", "SO"),
+    Position_Player("Spencer Butt", "FSU", "INF", "FR"),
+    Position_Player("Matthew Delgado", "Rogers State U","C", "JR"),
+    Position_Player("Darian Duhon", "Oklahoma City U", "INF", "JR"),
+    Position_Player("Jacob Green", "Seminole State College", "OF", "SO"),
+    Position_Player("Cameron Harris", "Wingate", "OF", "SO"),
+    Position_Player("Jackson Harris", "Samford", "OF/Pitcher", "FR"),
+    Position_Player("Anthony Havrilla", "Marshall", "INF", "FR"),
+    Position_Player("Ethan Murdoch", "Marshall", "OF", "JR"),
+    Position_Player("Anthony Paskell", "Rider", "OF", "SO"),
+    Position_Player("Mike Rinaldi", "Seminole State College", "1B/OF", "SO"),
+    Position_Player("Witt Scafidi", "William & Mary", "C", "SO"),
+    Position_Player("Jackson Schrafft", "SJRCC", "3B/OF", "SO"),
+    Position_Player("Matthew Strand", "Samford", "C/OF", "SO"),
+    Position_Player("Jack Torbett", "Walters St", "INF", "FR"),
+    Position_Player("Brett Wehringer", "Georgetown", "INF", "FR"),
+
+    # more players
+]
+
+pitcher_roster = [
+    Pitcher("Spencer Biggerstaff", "Oklahoma City U", "Pitcher", "FR"),
+    Pitcher("Jason Cheifetz", "JMU", "Pitcher", "SO"),
+    Pitcher("Benjamin Craig", "UMBC", "Pitcher", "SO"),
+    Pitcher("David Davila", "FSU", "Pitcher", "FR"),
+    Pitcher("Robert Kelley", "West Virginia Tech", "Pitcher", "JR"),
+    Pitcher("Caden Kok", "SJRCC", "Pitcher", "FR"),
+    Pitcher("Griffin Miller", "Marshall", "Pitcher", "FR"),
+    Pitcher("Hudson Rowan", "FSU", "Pitcher", "FR"),
+    Pitcher("Jeremy Sheffield", "Georgetown", "Pitcher", "SO"),
+    Pitcher("Payton Waters", "SJRCC", "Pitcher", "FR"),
+    Player("Chris Zupito", "NCST", "Pitcher", "FR"),
+]
+
+for player in position_roster and pitcher_roster:
+    player.display_player_info()
+    
+
+def create_player_dataframe(position_roster):
+    """
+    Creates a pandas DataFrame from a roster of Player objects.
+    The DataFrame will include columns for games played, home runs, and batting average.
+    
+    Parameters:
+    - roster: A list of Player objects.
+    
+    Returns:
+    - A pandas DataFrame with player data and columns for games played, home runs, and batting average.
+    """
+    # Convert the roster to a list of dictionaries
+    player_data = [
+        {
+            "name": player.name,
+            "college": player.college,
+            "position": player.position,
+            "year": player.year,
+            "games_played": 0,  # Initialize with default value
+            "home_runs": 0,     # Initialize with default value
+            "batting_average": 0.0  # Initialize with default value
+        }
+        for player in position_roster
+    ]
+    
+    # Create the DataFrame
+    df = pd.DataFrame(player_data)
+    
+    # Set the precision for 'batting_average' to 3 decimal places
+    # Note: This only affects the display, not the underlying storage
+    pd.set_option('display.precision', 3)
+    
+    return df
+
+# Assuming the Player class and roster are already defined
+df_players = create_player_dataframe(position_roster)
+
+# Display the first few rows of the DataFrame to verify
+df_players
+
+
+def update_player_stats(df, name, games_played, home_runs, batting_average):
+    """
+    Updates the statistics for a specific player in the DataFrame.
+    
+    Parameters:
+    - df: The DataFrame containing player data.
+    - name: The name of the player to update.
+    - games_played: The new number of games played.
+    - home_runs: The new number of home runs.
+    - batting_average: The new batting average.
+    """
+    df.loc[df['name'] == name, ['games_played', 'home_runs', 'batting_average']] = [games_played, home_runs, batting_average]
+
+# Example usage
+update_player_stats(df_players, "Jonathan Anderosky", 3, 0, 0.500)
+update_player_stats(df_players, "Matthew Delgado", 9, 0, 0.257)
+update_player_stats(df_players, "Darian Duhon", 14, 2, 0.413)
+update_player_stats(df_players, "Jacob Green", 12, 0, 0.489)
+update_player_stats(df_players, "Cam Harris", 10, 1, 0.452)
+update_player_stats(df_players, "Jackson Harris", 3, 1, 0.100)
+update_player_stats(df_players, "Anthony Havrilla", 3, 0, 0.333)
+update_player_stats(df_players, "Ethan Murdoch", 2, 0, 0.000)
+update_player_stats(df_players, "Anthony Paskell", 3, 0, 0.091)
+update_player_stats(df_players, "Mike Rinaldi", 4, 0, 0.428)
+update_player_stats(df_players, "Witt Scafidi", 1, 0, 0.000)
+update_player_stats(df_players, "Jackson Schrafft", 7, 0, 0.200)
+update_player_stats(df_players, "Matthew Strand", 1, 0, 0.000)
+update_player_stats(df_players, "Jackson Schrafft", 7, 0, 0.200)
+update_player_stats(df_players, "Jack Torbett", 13, 0, 0.167)
+update_player_stats(df_players, "Brett Wehringer", 0, 0, 0.000)
+
+
+df_players
+
+
+def create_player_dataframe(pitcher_roster):
+    """
+    Creates a pandas DataFrame from a roster of Player objects.
+    The DataFrame will include columns for games played, home runs, and batting average.
+    
+    Parameters:
+    - roster: A list of Player objects.
+    
+    Returns:
+    - A pandas DataFrame with player data and columns for games played, home runs, and batting average.
+    """
+# Convert the roster to a list of dictionaries
+    pitcher_data = [
+        {
+            "name": player.name,
+            "college": player.college,
+            "position": player.position,
+            "year": player.year,
+            "games_played": 0,  # Initialize with default value
+            "innings_pitched": 0.0,     # Initialize with default value
+            "earned_run_average": 0.00  # Initialize with default value
+        }
+        for player in pitcher_roster
+    ]
+    
+    # Create the DataFrame
+    df = pd.DataFrame(pitcher_data)
+    
+    # Set the precision for 'batting_average' to 3 decimal places
+    # Note: This only affects the display, not the underlying storage
+    pd.set_option('display.precision', 2)
+    
+    return df
+
+# Assuming the Player class and roster are already defined
+df_pitchers = create_player_dataframe(pitcher_roster)
+
+df_pitchers
+
+
+def update_pitcher_stats(df, name, games_played, innings_pitched, earned_run_average):
+    """
+    Updates the statistics for a specific pitcher in the DataFrame.
+    
+    Parameters:
+    - df: The DataFrame containing player data.
+    - name: The name of the player to update.
+    - games_played: The new number of games played.
+    - innings_pitched: The new number of innings_pitched.
+    - earned_run_average: The new earned run average.
+    """
+    df.loc[df['name'] == name, ['games_played', 'innings_pitched', 'earned_run_average']] = [games_played, innings_pitched, earned_run_average]
+    
+update_pitcher_stats(df_pitchers,"Spencer Biggerstaff", 3, 2.2, 23.62),
+update_pitcher_stats(df_pitchers,"Jason Cheifetz", 0, 0.0, 0.00),
+update_pitcher_stats(df_pitchers,"Benjamin Craig", 0, 0.0, 0.00),
+update_pitcher_stats(df_pitchers,"David Davila", 0, 0.0, 0.00),
+update_pitcher_stats(df_pitchers,"Robert Kelley", 2, 11.2, 3.09),
+update_pitcher_stats(df_pitchers,"Caden Kok", 6, 5.1, 1.69),
+update_pitcher_stats(df_pitchers,"Griffin Miller", 1, 2.2, 0.00),
+update_pitcher_stats(df_pitchers,"Hudson Rowan", 1, 1.0, 0.00),
+update_pitcher_stats(df_pitchers,"Jeremy Sheffield", 0, 0.0, 0.00),
+update_pitcher_stats(df_pitchers,"Payton Waters", 4, 20.1, 2.66),
+update_pitcher_stats(df_pitchers,"Chris Zupito", 0, 0.0, 0.00),
+    
+df_pitchers
