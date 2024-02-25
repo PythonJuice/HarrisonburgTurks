@@ -22,7 +22,7 @@ class Pitcher:
     
     def display_player_info(self):
         print(f"{self.name}, {self.position}, {self.college}, {self.year}")
-
+        
 
 # Creating a roster
 position_roster = [
@@ -57,12 +57,20 @@ pitcher_roster = [
     Pitcher("Hudson Rowan", "FSU", "Pitcher", "FR"),
     Pitcher("Jeremy Sheffield", "Georgetown", "Pitcher", "SO"),
     Pitcher("Payton Waters", "SJRCC", "Pitcher", "FR"),
-    Player("Chris Zupito", "NCST", "Pitcher", "FR"),
+    Pitcher("Chris Zupito", "NCST", "Pitcher", "FR"),
 ]
 
-for player in position_roster and pitcher_roster:
-    player.display_player_info()
+potential_roster = [
+    Pitcher("Ben Smith", "GCU", "Pitcher", "FR"),
+    Pitcher("Carsen Byers", "Miami Ohio", "Pitcher", "SO")
+]
+
+# for player in position_roster:
+#     player.display_player_info()
     
+# for player in pitcher_roster:
+#     player.display_player_info()
+
 
 def create_player_dataframe(position_roster):
     """
@@ -84,7 +92,9 @@ def create_player_dataframe(position_roster):
             "year": player.year,
             "games_played": 0,  # Initialize with default value
             "home_runs": 0,     # Initialize with default value
-            "batting_average": 0.0  # Initialize with default value
+            "batting_average": 0.0,  # Initialize with default value
+            "steals": 0, #Initialize with default value
+            "caught stealing": 0 #Initialize with default value
         }
         for player in position_roster
     ]
@@ -102,10 +112,26 @@ def create_player_dataframe(position_roster):
 df_players = create_player_dataframe(position_roster)
 
 # Display the first few rows of the DataFrame to verify
-df_players
+#df_players
+
+# Create the DataFrame from the position_roster
+df_players = create_player_dataframe(position_roster)
+
+# Assuming you've updated df_players with actual data, you can then sum up the relevant statistics
+total_games_played = df_players['games_played'].sum()
+total_home_runs = df_players['home_runs'].sum()
+total_steals = df_players['steals'].sum()
+total_caught_stealing = df_players['caught stealing'].sum()
+
+# Display the aggregated statistics
+print(f"Total Games Played: {total_games_played}")
+print(f"Total Home Runs: {total_home_runs}")
+print(f"Total Steals: {total_steals}")
+print(f"Total Caught Stealing: {total_caught_stealing}")
 
 
-def update_player_stats(df, name, games_played, home_runs, batting_average):
+
+def update_player_stats(df, name, games_played, home_runs, batting_average, steals, caught_stealing):
     """
     Updates the statistics for a specific player in the DataFrame.
     
@@ -116,28 +142,42 @@ def update_player_stats(df, name, games_played, home_runs, batting_average):
     - home_runs: The new number of home runs.
     - batting_average: The new batting average.
     """
-    df.loc[df['name'] == name, ['games_played', 'home_runs', 'batting_average']] = [games_played, home_runs, batting_average]
+    df.loc[df['name'] == name, ['games_played', 'home_runs', 'batting_average', 'steals', 'caught_stealing']] = [games_played, home_runs, batting_average, steals, caught_stealing]
 
 # Example usage
-update_player_stats(df_players, "Jonathan Anderosky", 3, 0, 0.500)
-update_player_stats(df_players, "Matthew Delgado", 9, 0, 0.257)
-update_player_stats(df_players, "Darian Duhon", 14, 2, 0.413)
-update_player_stats(df_players, "Jacob Green", 12, 0, 0.489)
-update_player_stats(df_players, "Cam Harris", 10, 1, 0.452)
-update_player_stats(df_players, "Jackson Harris", 3, 1, 0.100)
-update_player_stats(df_players, "Anthony Havrilla", 3, 0, 0.333)
-update_player_stats(df_players, "Ethan Murdoch", 2, 0, 0.000)
-update_player_stats(df_players, "Anthony Paskell", 3, 0, 0.091)
-update_player_stats(df_players, "Mike Rinaldi", 4, 0, 0.428)
-update_player_stats(df_players, "Witt Scafidi", 1, 0, 0.000)
-update_player_stats(df_players, "Jackson Schrafft", 7, 0, 0.200)
-update_player_stats(df_players, "Matthew Strand", 1, 0, 0.000)
-update_player_stats(df_players, "Jackson Schrafft", 7, 0, 0.200)
-update_player_stats(df_players, "Jack Torbett", 13, 0, 0.167)
-update_player_stats(df_players, "Brett Wehringer", 0, 0, 0.000)
+update_player_stats(df_players, "Jonathan Anderosky", 3, 0, 0.500, 3, 2)
+update_player_stats(df_players, "Spencer Butt", 0, 0, .000, 0, 0)
+update_player_stats(df_players, "Matthew Delgado", 11, 0, 0.256, 1, 1)
+update_player_stats(df_players, "Darian Duhon", 15, 2, 0.420, 1, 0)
+update_player_stats(df_players, "Jacob Green", 15, 0, 0.456, 8, 1)
+update_player_stats(df_players, "Cameron Harris", 10, 1, 0.452, 2, 2)
+update_player_stats(df_players, "Jackson Harris", 4, 1, 0.091, 0, 0)
+update_player_stats(df_players, "Anthony Havrilla", 2, 0, 0.333, 0, 0)
+update_player_stats(df_players, "Ethan Murdoch", 2, 0, 0.000, 0, 0)
+update_player_stats(df_players, "Anthony Paskell", 4, 0, 0.133, 0, 1)
+update_player_stats(df_players, "Mike Rinaldi", 6, 0, 0.385, 0, 0)
+update_player_stats(df_players, "Witt Scafidi", 1, 0, 0.000, 0, 0)
+update_player_stats(df_players, "Jackson Schrafft", 7, 0, 0.200, 1, 0)
+update_player_stats(df_players, "Matthew Strand", 1, 0, 0.000, 0, 0)
+update_player_stats(df_players, "Jack Torbett", 14, 0, 0.167, 0, 0)
+update_player_stats(df_players, "Brett Wehringer", 0, 0, 0.000, 0, 0)
 
 
-df_players
+print(df_players)
+
+# Assuming you've updated df_players with actual data, you can then sum up the relevant statistics
+total_games_played = df_players['games_played'].sum()
+total_home_runs = df_players['home_runs'].sum()
+total_steals = df_players['steals'].sum()
+total_caught_stealing = df_players['caught stealing'].sum()
+batting_average = df_players['batting_average'].mean()
+
+# Display the aggregated statistics
+print(f"Total Games Played: {total_games_played}")
+print(f"Total Home Runs: {total_home_runs}")
+print(f"Total Steals: {total_steals}")
+print(f"Total Caught Stealing: {total_caught_stealing}")
+print(f"Batting Average: {batting_average}")
 
 
 def create_player_dataframe(pitcher_roster):
@@ -160,27 +200,30 @@ def create_player_dataframe(pitcher_roster):
             "year": player.year,
             "games_played": 0,  # Initialize with default value
             "innings_pitched": 0.0,     # Initialize with default value
-            "earned_run_average": 0.00  # Initialize with default value
+            "earned_run_average": 0.00,  # Initialize with default value
+            "Strikeouts": 0, # Initialize with default value
+            "Walks": 0 # Initialize with default value
         }
         for player in pitcher_roster
     ]
     
     # Create the DataFrame
-    df = pd.DataFrame(pitcher_data)
+    df_pitchers = pd.DataFrame(pitcher_data)
     
     # Set the precision for 'batting_average' to 3 decimal places
     # Note: This only affects the display, not the underlying storage
     pd.set_option('display.precision', 2)
     
-    return df
+    return df_pitchers
 
 # Assuming the Player class and roster are already defined
 df_pitchers = create_player_dataframe(pitcher_roster)
 
-df_pitchers
+# Display the first few rows of the DataFrame to verify
+#df_pitchers
 
 
-def update_pitcher_stats(df, name, games_played, innings_pitched, earned_run_average):
+def update_pitcher_stats(df, name, games_played, innings_pitched, earned_run_average, strikeouts, walks):
     """
     Updates the statistics for a specific pitcher in the DataFrame.
     
@@ -191,18 +234,32 @@ def update_pitcher_stats(df, name, games_played, innings_pitched, earned_run_ave
     - innings_pitched: The new number of innings_pitched.
     - earned_run_average: The new earned run average.
     """
-    df.loc[df['name'] == name, ['games_played', 'innings_pitched', 'earned_run_average']] = [games_played, innings_pitched, earned_run_average]
+    df.loc[df['name'] == name, ['games_played', 'innings_pitched', 'earned_run_average', 'strikeouts', 'walks']] = [games_played, innings_pitched, earned_run_average, strikeouts, walks]
     
-update_pitcher_stats(df_pitchers,"Spencer Biggerstaff", 3, 2.2, 23.62),
-update_pitcher_stats(df_pitchers,"Jason Cheifetz", 0, 0.0, 0.00),
-update_pitcher_stats(df_pitchers,"Benjamin Craig", 0, 0.0, 0.00),
-update_pitcher_stats(df_pitchers,"David Davila", 0, 0.0, 0.00),
-update_pitcher_stats(df_pitchers,"Robert Kelley", 2, 11.2, 3.09),
-update_pitcher_stats(df_pitchers,"Caden Kok", 6, 5.1, 1.69),
-update_pitcher_stats(df_pitchers,"Griffin Miller", 1, 2.2, 0.00),
-update_pitcher_stats(df_pitchers,"Hudson Rowan", 1, 1.0, 0.00),
-update_pitcher_stats(df_pitchers,"Jeremy Sheffield", 0, 0.0, 0.00),
-update_pitcher_stats(df_pitchers,"Payton Waters", 4, 20.1, 2.66),
-update_pitcher_stats(df_pitchers,"Chris Zupito", 0, 0.0, 0.00),
+update_pitcher_stats(df_pitchers,"Spencer Biggerstaff", 3, 3.2, 24.55, 4, 7),
+update_pitcher_stats(df_pitchers,"Jason Cheifetz", 0, 0.0, 0.00, 0, 0),
+update_pitcher_stats(df_pitchers,"Benjamin Craig", 0, 0.0, 0.00, 0, 0),
+update_pitcher_stats(df_pitchers,"David Davila", 0, 0.0, 0.00, 0, 0),
+update_pitcher_stats(df_pitchers,"Robert Kelley", 3, 15.1, 5.28, 20, 3),
+update_pitcher_stats(df_pitchers,"Caden Kok", 6, 5.1, 1.69, 6, 5),
+update_pitcher_stats(df_pitchers,"Griffin Miller", 1, 2.2, 0.00, 3, 2),
+update_pitcher_stats(df_pitchers,"Hudson Rowan", 1, 1.0, 0.00, 2, 0),
+update_pitcher_stats(df_pitchers,"Jeremy Sheffield", 0, 0.0, 0.00, 0, 0),
+update_pitcher_stats(df_pitchers,"Payton Waters", 4, 20.1, 2.66, 15, 8),
+update_pitcher_stats(df_pitchers,"Chris Zupito", 0, 0.0, 0.00, 0, 0),
     
-df_pitchers
+print(df_pitchers)
+
+# Assuming you've updated df_players with actual data, you can then sum up the relevant statistics
+total_games_played = df_pitchers['games_played'].sum()
+total_innings_pitched = df_pitchers['innings_pitched'].sum()
+total_strikeouts = df_pitchers['strikeouts'].sum()
+total_walks = df_pitchers['walks'].sum()
+earned_RA = df_pitchers['earned_run_average'].mean()
+
+# Display the aggregated statistics
+print(f"Total Games Played: {total_games_played}")
+print(f"Total Innings Pitched: {total_innings_pitched}")
+print(f"Total Strikeouts: {total_strikeouts}")
+print(f"Total Walks: {total_walks}")
+print(f"earned_run_average: {earned_RA}")
