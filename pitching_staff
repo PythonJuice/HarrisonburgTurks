@@ -1,0 +1,219 @@
+import json
+from datetime import datetime, timedelta
+import tkinter as tk
+from tkinter import ttk
+from tkinter import messagebox
+
+
+class Pitcher:
+    def __init__(self, name, university, role, year):
+        self.name = name
+        self.university = university
+        self.role = role
+        self.year = year
+
+class PitchersJournalEnhanced:
+    def __init__(self, roster):
+        self.pitchers_stats = {}
+        self.last_game_date = {}
+        self.roster = {pitcher.name: pitcher for pitcher in roster}
+
+    def can_pitch(self, pitcher_name, date, pitches):
+        if not isinstance(date, datetime):
+            return "Error: Date must be a datetime object."
+        
+        if pitcher_name in self.last_game_date:
+            last_date = self.last_game_date[pitcher_name]
+            if date.date() == last_date.date():
+                return f"Cannot pitch: {pitcher_name} cannot play in multiple games on the same day."
+            if (date - last_date) <= timedelta(days=2):
+                return f"Cannot pitch: {pitcher_name} cannot appear in games for three consecutive days."
+        
+        days_rest = (date - self.last_game_date.get(pitcher_name, date - timedelta(days=6))).days - 1
+        max_pitches = self.calculate_max_pitches(days_rest)
+
+        if pitches > max_pitches or pitches > 120:
+            return f"Cannot pitch: Exceeds max pitches for {pitcher_name}. Allowed: {max_pitches}, Attempted: {pitches}"
+
+        return "OK"
+
+
+
+    @staticmethod
+    def calculate_max_pitches(days_rest):
+        if days_rest >= 5:
+            return 106
+        elif days_rest == 4:
+            return 105
+        elif days_rest == 3:
+            return 80
+        elif days_rest == 2:
+            return 60
+        elif days_rest == 1:
+            return 45
+        else:
+            return 30
+
+    def add_game(self, pitcher_name, date, pitches, innings_pitched):
+        message = self.can_pitch(pitcher_name, date, pitches)
+        if message != "OK":
+            return message
+
+        if pitcher_name not in self.pitchers_stats:
+            self.pitchers_stats[pitcher_name] = {'pitches': [], 'innings_pitched': []}
+        self.pitchers_stats[pitcher_name]['pitches'].append(pitches)
+        self.pitchers_stats[pitcher_name]['innings_pitched'].append(innings_pitched)
+        self.last_game_date[pitcher_name] = date
+        return "Game added successfully. " + self.get_max_pitches_info(pitcher_name)
+
+    def get_summary(self, pitcher_name):
+        if pitcher_name not in self.pitchers_stats:
+            return f"No data available for {pitcher_name}."
+
+        total_pitches = sum(self.pitchers_stats[pitcher_name]['pitches'])
+        total_innings = sum(self.pitchers_stats[pitcher_name]['innings_pitched'])
+        games_played = len(self.pitchers_stats[pitcher_name]['pitches'])
+
+        summary = (f"Summary for {pitcher_name}:\n"
+                   f"Total Pitches: {total_pitches}\n"
+                   f"Total Innings Pitched: {total_innings}\n"
+                   f"Average Pitches per Game: {total_pitches / games_played:.2f}\n"
+                   f"Average Innings Pitched per Game: {total_innings / games_played:.2f}\n")
+        if pitcher_name in self.last_game_date:
+            summary += f"Last Game Date: {self.last_game_date[pitcher_name].date()}"
+        return summary
+
+    def get_rest_days_and_max_pitches(self, pitcher_name):
+        if pitcher_name not in self.last_game_date:
+            return 0, 120  # If no games have been logged, assume max rest and pitches.
+        last_game_date = self.last_game_date[pitcher_name]
+        rest_days = (datetime.now() - last_game_date).days - 1
+        max_pitches = self.calculate_max_pitches(rest_days)
+        return rest_days, max_pitches
+
+    def get_max_pitches_info(self, pitcher_name):
+        rest_days, max_pitches = self.get_rest_days_and_max_pitches(pitcher_name)
+        return f"{pitcher_name} has had {rest_days} days of rest and can throw up to {max_pitches} pitches today."
+    
+    def roster_availability_summary(self):
+        summary = ""
+        for pitcher_name in self.roster.keys():
+            rest_days, max_pitches = self.get_rest_days_and_max_pitches(pitcher_name)
+            summary += f"{pitcher_name}: {rest_days} days rest, can throw up to {max_pitches} pitches today.\n"
+        return summary
+    
+    
+    def save_data(self):
+        data = {
+        "pitchers_stats": self.pitchers_stats,
+        "last_game_date": {pitcher: date.strftime('%Y-%m-%d') for pitcher, date in self.last_game_date.items()}
+        }
+        with open('pitcher_data.json', 'w') as f:
+            json.dump(data, f)
+            
+    
+    def load_data(self):
+        try:
+            with open('pitcher_data.json', 'r') as f:
+                data = json.load(f)
+                self.pitchers_stats = data["pitchers_stats"]
+                self.last_game_date = {pitcher: datetime.strptime(date, '%Y-%m-%d') for pitcher, date in data["last_game_date"].items()}
+        except (FileNotFoundError, json.JSONDecodeError):
+                    print("No existing data found or data corrupted. Starting fresh.")
+
+
+pitcher_roster = [
+    Pitcher("Spencer Biggerstaff", "Oklahoma City U", "Pitcher", "FR"),
+    Pitcher("Jason Cheifetz", "JMU", "Pitcher", "SO"),
+    Pitcher("Benjamin Craig", "UMBC", "Pitcher", "SO"),
+    Pitcher("David Davila", "FSU", "Pitcher", "FR"),
+    Pitcher("Robert Kelley", "West Virginia Tech", "Pitcher", "JR"),
+    Pitcher("Caden Kok", "SJRCC", "Pitcher", "FR"),
+    Pitcher("Griffin Miller", "Marshall", "Pitcher", "FR"),
+    Pitcher("Hudson Rowan", "FSU", "Pitcher", "FR"),
+    Pitcher("Jeremy Sheffield", "Georgetown", "Pitcher", "SO"),
+    Pitcher("Payton Waters", "SJRCC", "Pitcher", "FR"),
+    Pitcher("Chris Zupito", "NCST", "Pitcher", "FR"),
+    Pitcher("Carson Morton", "Wingate", "Pitcher", "FR"),
+]
+
+# Initialize the journal with the pitcher roster
+journal = PitchersJournalEnhanced(pitcher_roster)
+journal.load_data()
+
+
+# GUI Functions
+def add_game():
+    pitcher_name = pitcher_combobox.get()
+    try:
+        date = datetime.strptime(date_entry.get(), '%Y-%m-%d')
+        pitches = int(pitches_entry.get())
+        innings = float(innings_entry.get())
+        result = journal.add_game(pitcher_name, date, pitches, innings)
+        messagebox.showinfo("Game Addition Result", result)
+    except Exception as e:
+        messagebox.showerror("Error", str(e))
+
+def show_summary():
+    pitcher_name = pitcher_combobox.get()
+    summary = journal.get_summary(pitcher_name)
+    summary_text.delete(1.0, tk.END)
+    summary_text.insert(tk.END, summary)
+
+def show_pitcher_status():
+    pitcher_name = pitcher_combobox.get()
+    status_message = journal.get_max_pitches_info(pitcher_name)
+    messagebox.showinfo("Pitcher Status", status_message)
+
+def show_roster_availability():
+    availability_summary = journal.roster_availability_summary()
+    # Display the summary in a message box or a dedicated text widget
+    messagebox.showinfo("Roster Availability", availability_summary)
+
+def on_closing():
+    journal.save_data()
+    root.destroy()
+
+
+
+# GUI Setup
+root = tk.Tk()
+root.title("Pitcher's Journal")
+root.protocol("WM_DELETE_WINDOW", on_closing)
+
+show_roster_availability_button = tk.Button(root, text="Show Roster Availability", command=show_roster_availability)
+show_roster_availability_button.pack()
+
+pitcher_label = tk.Label(root, text="Select Pitcher:")
+pitcher_label.pack()
+pitcher_combobox = ttk.Combobox(root, values=[p.name for p in pitcher_roster])
+pitcher_combobox.pack()
+
+date_label = tk.Label(root, text="Game Date (YYYY-MM-DD):")
+date_label.pack()
+date_entry = tk.Entry(root)
+date_entry.pack()
+
+pitches_label = tk.Label(root, text="Pitches Thrown:")
+pitches_label.pack()
+pitches_entry = tk.Entry(root)
+pitches_entry.pack()
+
+innings_label = tk.Label(root, text="Innings Pitched:")
+innings_label.pack()
+innings_entry = tk.Entry(root)
+innings_entry.pack()
+
+add_game_button = tk.Button(root, text="Add Game", command=add_game)
+add_game_button.pack()
+
+show_summary_button = tk.Button(root, text="Show Summary", command=show_summary)
+show_summary_button.pack()
+
+show_status_button = tk.Button(root, text="Show Pitcher Status", command=show_pitcher_status)
+show_status_button.pack()
+
+summary_text = tk.Text(root, height=10, width=50)
+summary_text.pack()
+
+root.mainloop()
