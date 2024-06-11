@@ -12,6 +12,7 @@ class Pitcher:
         self.role = role
         self.year = year
 
+
 class PitchersJournalEnhanced:
     def __init__(self, roster):
         self.pitchers_stats = {}
@@ -127,14 +128,18 @@ pitcher_roster = [
     Pitcher("Jason Cheifetz", "JMU", "Pitcher", "SO"),
     Pitcher("Benjamin Craig", "UMBC", "Pitcher", "SO"),
     Pitcher("David Davila", "FSU", "Pitcher", "FR"),
-    Pitcher("Robert Kelley", "West Virginia Tech", "Pitcher", "JR"),
     Pitcher("Caden Kok", "SJRCC", "Pitcher", "FR"),
     Pitcher("Griffin Miller", "Marshall", "Pitcher", "FR"),
     Pitcher("Hudson Rowan", "FSU", "Pitcher", "FR"),
-    Pitcher("Jeremy Sheffield", "Georgetown", "Pitcher", "SO"),
     Pitcher("Payton Waters", "SJRCC", "Pitcher", "FR"),
     Pitcher("Chris Zupito", "NCST", "Pitcher", "FR"),
     Pitcher("Carson Morton", "Wingate", "Pitcher", "FR"),
+    Pitcher("Hudson Lee", "Wake Forest", "Pitcher", "SO"),
+    Pitcher("Lane Duff", "JMU", "Pitcher", "SO"),
+    Pitcher("Jackson Hull", "JMU", "Pitcher", "JR"),
+    Pitcher("Chad Harvey", "Wingate", "Pitcher", "SO"),
+    Pitcher("Joe Valchar", "Army", "Pitcher", "SR"),
+    Pitcher("Eli Zielinski", "USA", "Pitcher", "JR"),
 ]
 
 # Initialize the journal with the pitcher roster
